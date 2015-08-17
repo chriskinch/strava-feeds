@@ -1,0 +1,27 @@
+{
+  "name": "stravafeeds",
+  "description": "Strava Feed JS",
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "dist/stravafeeds.min.js",
+  "ignore": [
+    "**/.*",
+    "node_modules"
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-umd": "~1.7.3",
+    "jquery": "~1.5.0",
+    "strava-v3": "^1.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chriskinch/strava-feeds"
+  },
+  "bugs": {
+    "url": "https://github.com/chriskinch/strava-feeds/issues"
+  }
+}
