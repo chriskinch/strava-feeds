@@ -36,16 +36,22 @@ Feed.prototype = {
 		// Setup variables and defaults.
 		var defaults = {
 			per_page:	1,
+			average_speed: true,
+			max_speed: true,
+			moving_time: true,
+			distance: true,
+			total_elevation_gain: true,
+			kilojoules: true,
+			map: true,
 		};
 
 		// Final properties and options are merged to default.
 		instance.settings = extend({}, defaults, options);  //TO DO
 
-		// Setting up JSOM config from provided params and settings.
+		// Setting up JSON config from provided params and settings.
 		instance.config = {
 			url:'http://www.strava.com/api' + method,
 			params: {
-				//user: user,
 				access_token: access_token,
 				per_page: instance.settings.per_page,
 				callback: '?'

@@ -48,16 +48,22 @@
   		// Setup variables and defaults.
   		var defaults = {
   			per_page:	1,
+  			average_speed: true,
+  			max_speed: true,
+  			moving_time: true,
+  			distance: true,
+  			total_elevation_gain: true,
+  			kilojoules: true,
+  			map: true,
   		};
 
   		// Final properties and options are merged to default.
   		instance.settings = extend({}, defaults, options);  //TO DO
 
-  		// Setting up JSOM config from provided params and settings.
+  		// Setting up JSON config from provided params and settings.
   		instance.config = {
   			url:'http://www.strava.com/api' + method,
   			params: {
-  				//user: user,
   				access_token: access_token,
   				per_page: instance.settings.per_page,
   				callback: '?'
@@ -180,13 +186,13 @@
   		var self = this, // Register 'this' to keep scope
   			classes = null,
   			fragment = document.createDocumentFragment(),
-  			m, map, title,
-  			ul = document.createElement("ul");
+  			m, map, ul, title;
 
   		title = self.buildDOMElement("div", {'className': 'strava-title', 'innerHTML': feed.name });
   		fragment.appendChild(title);
 
   		// Attach the ul after other elements e.g: title
+  		ul = self.buildDOMElement("ul", {'className': 'strava-info'});
   		fragment.appendChild(ul);
 
   		// Convert various data points
@@ -198,38 +204,32 @@
 
   		var group = [];
 
-  		group.push( self.buildDOMElement("li", {'className': 'strava-average_speed', 'innerHTML': average_speed }) );
-  		group.push( self.buildDOMElement("li", {'className': 'strava-max_speed', 'innerHTML': max_speed }) );
-  		group.push( self.buildDOMElement("li", {'className': 'strava-moving_time', 'innerHTML': moving_time }) );
-  		group.push( self.buildDOMElement("li", {'className': 'strava-distance', 'innerHTML': distance }) );
-  		group.push( self.buildDOMElement("li", {'className': 'strava-elevation', 'innerHTML': total_elevation_gain }) );
-  		group.push( self.buildDOMElement("li", {'className': 'strava-calories', 'innerHTML': feed.kilojoules }) );
-  		
-  		map = self.buildDOMElement("div", {'className':'strava-map'});
-  		fragment.appendChild(map);
+  		group.push( self.buildDOMElement("li", {'className': 'strava-average_speed', 'innerHTML': average_speed }, self.settings.average_speed) );
+  		group.push( self.buildDOMElement("li", {'className': 'strava-max_speed', 'innerHTML': max_speed }, self.settings.max_speed) );
+  		group.push( self.buildDOMElement("li", {'className': 'strava-moving_time', 'innerHTML': moving_time }, self.settings.moving_time) );
+  		group.push( self.buildDOMElement("li", {'className': 'strava-distance', 'innerHTML': distance }, self.settings.distance) );
+  		group.push( self.buildDOMElement("li", {'className': 'strava-elevation', 'innerHTML': total_elevation_gain }, self.settings.total_elevation_gain) );
+  		group.push( self.buildDOMElement("li", {'className': 'strava-calories', 'innerHTML': feed.kilojoules }, self.settings.kilojoules) );
 
-  		//li = self.buildDOMElement("li", {'title': title, 'className':classes});
-  		//ol.appendChild(li);
-
-  		//link = self.buildDOMElement("a", {'href': val.url, 'target':'_blank'});
-  		//li.appendChild(link);
-
-  		//var src = val.image[self.getImageKey(self.settings.size)]['#text'],
-  		//	img = self.buildDOMElement("img", {'src': src, 'className':'cover', 'width':self.settings.size, 'height':self.settings.size}, self.settings.cover);
-  		//link.appendChild(img);
-
+  		// Add each group element to a container.
   		each(group, function(i, el){
-  			ul.appendChild(el);
+  			if(el) ul.appendChild(el);
   		});
 
-  		// Write to the DOM
+  		// Adding the map container. Maps will be loaded afterwards.
+  		map = self.buildDOMElement("div", {'className':'strava-map'}, self.settings.map);
+  		if(map) fragment.appendChild(map);
+
+  		// Write the elements to the DOM.
   		var evt = new CustomEvent('stravafeeds:attachelement');
   		window.dispatchEvent(evt);
   		this.element.appendChild(fragment);
 
-  		// Build the map element
-  		m = new mapper();
-  		map = m.init( feed );
+  		// Build the map element.
+  		if(self.settings.map) {
+  			m = new mapper( self.element, self.settings );
+  			map = m.init( feed );
+  		}
 
   	},
 
@@ -292,7 +292,9 @@
    * @param {Boolean} feedHandler.status: Maintains the current status of a feed
    */
 
-  function mapper( ) {
+  function mapper( element, settings ) {
+  	this.element = element;
+  	this.settings = settings;
   	this.status = null;
   }
 

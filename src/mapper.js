@@ -7,7 +7,9 @@
  * @param {Boolean} feedHandler.status: Maintains the current status of a feed
  */
 
-function mapper( ) {
+function mapper( element, settings ) {
+	this.element = element;
+	this.settings = settings;
 	this.status = null;
 }
 
